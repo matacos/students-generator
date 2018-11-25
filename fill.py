@@ -4,8 +4,15 @@ from random import choice
 from random import sample
 from math import floor
 import names
+import sys
+import lorem
 
 conn_string ="postgresql://postgres@127.0.0.1:5444/postgres"
+try:
+    conn_string=sys.argv[1]
+except Exception:
+    pass
+
 conn = psycopg2.connect(conn_string)
 cursor = conn.cursor()
 
@@ -134,10 +141,31 @@ def inscribir_estudiante_a_curso(course_id,student_id):
     values (%s,%s,NOW(),'t',-1,NOW()) on conflict do nothing;
     """,(course_id,student_id,))
     conn.commit()
+def agregar_encuesta(course,student):
+    feedback=lorem.sentence()
+    if random()<0.1:
+        feedback = lorem.paragraph()
+    if random()<0.01:
+        feedback = lorem.text()
+    def genq():
+        return floor(random()*10+1)
+    cursor.execute("""
+        insert into polls(course,student,q1,q2,q3,q4,q5,q6,q7,passed,feedback)
+        values (%s,%s,%s,%s,%s,%s,%s,%s,%s,'t',%s) on conflict do nothing;
+    """,(
+        course,
+        student,
+        genq(),genq(),genq(),genq(),genq(),genq(),genq(),
+        feedback
+        )
+    )
+    conn.commit()
+
 def inscribir_estudiantes(course_id):
     for x in range(floor(20+random()*50)):
         padron=nuevo_estudiante()
         inscribir_estudiante_a_curso(course_id,padron)
+        agregar_encuesta(course_id,padron)
 
 def nuevo_curso_de_materia_completo(department_code,subject_code,semester):
     course_id=nuevo_curso_de_materia(department_code,subject_code,semester)
@@ -160,9 +188,13 @@ def crear_cursos_de_depto(department_code,semester):
 
 
 for s in ["1c2018","2c2018","2c2017","1c2019"]:
+    print("agregando a 75 ",s)
     crear_cursos_de_depto("75",s)
+    print("agregando a 68 ",s)
     crear_cursos_de_depto("68",s)
+    print("agregando a 84 ",s)
     crear_cursos_de_depto("84",s)
+    print("agregando a 66 ",s)
     crear_cursos_de_depto("66",s)
     
 
