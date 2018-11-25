@@ -17,7 +17,7 @@ def generate_one(username):
     degrees="-".join([str(x) for x in all_degrees[:randint(1,3)]])
     return ",".join([str(x) for x in [
         username,
-        username,
+        username if randint(1,2)==2 else "",
         name,
         surname,
         randint(1,200),
