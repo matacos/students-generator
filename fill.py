@@ -2,6 +2,7 @@ import psycopg2
 from random import random
 from random import choice
 from random import sample
+from random import triangular
 from math import floor
 import names
 import sys
@@ -148,7 +149,8 @@ def agregar_encuesta(course,student):
     if random()<0.01:
         feedback = lorem.text()
     def genq():
-        return floor(random()*10+1)
+        centro = (course % 10) + 1
+        return min(max(floor(triangular(centro-3,centro+3,centro)),1),10)
     cursor.execute("""
         insert into polls(course,student,q1,q2,q3,q4,q5,q6,q7,passed,feedback)
         values (%s,%s,%s,%s,%s,%s,%s,%s,%s,'t',%s) on conflict do nothing;
@@ -174,15 +176,14 @@ def nuevo_curso_de_materia_completo(department_code,subject_code,semester):
     inscribir_estudiantes(course_id)
 
 def crear_cursos_de_materia(department_code,subject_code,semester):
-    for x in range(floor(random()*5)+1):
-        nuevo_curso_de_materia_completo(department_code,subject_code,semester)
-        nuevo_curso_de_materia_completo(department_code,subject_code,semester)
-        nuevo_curso_de_materia_completo(department_code,subject_code,semester)
+    for x in range(floor(random()*4)+1):
         nuevo_curso_de_materia_completo(department_code,subject_code,semester)
 
 def crear_cursos_de_depto(department_code,semester):
     cursor.execute("select code from subjects where department_code=%s",(department_code,))
-    materias=sample([x[0] for x in cursor.fetchall()],4)
+
+    cursos=list([x[0] for x in cursor.fetchall()])
+    materias=sample(cursos,min(floor(random()*10+5),len(cursos)))
     for m in materias:
         crear_cursos_de_materia(department_code,m,semester)
 
