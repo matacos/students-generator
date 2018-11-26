@@ -152,7 +152,11 @@ def agregar_encuesta(course,student):
         feedback = lorem.text()
     def genq():
         centro = (course % 10) + 1
-        return min(max(floor(triangular(centro-3,centro+3,centro)),1),10)
+        val = min(max(floor(triangular(centro-3,centro+3,centro)),1),10)
+        if val <1:
+            val=1
+        return val
+
     cursor.execute("""
         insert into polls(course,student,q1,q2,q3,q4,q5,q6,q7,passed,feedback)
         values (%s,%s,%s,%s,%s,%s,%s,%s,%s,'t',%s) on conflict do nothing;
@@ -190,14 +194,8 @@ def crear_cursos_de_depto(department_code,semester):
         crear_cursos_de_materia(department_code,m,semester)
 
 
-for s in ["1c2018","2c2018","2c2017","1c2019"]:
+for s in ["1c2018","2c2018"]:
     print("agregando a 75 ",s)
     crear_cursos_de_depto("75",s)
-    print("agregando a 68 ",s)
-    crear_cursos_de_depto("68",s)
-    print("agregando a 84 ",s)
-    crear_cursos_de_depto("84",s)
-    print("agregando a 66 ",s)
-    crear_cursos_de_depto("66",s)
     
 
