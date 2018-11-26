@@ -144,6 +144,8 @@ def inscribir_estudiante_a_curso(course_id,student_id):
     conn.commit()
 def agregar_encuesta(course,student):
     feedback=lorem.sentence()
+    if random()>0.5:
+        feedback = ""
     if random()<0.1:
         feedback = lorem.paragraph()
     if random()<0.01:
