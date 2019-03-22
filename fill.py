@@ -58,6 +58,9 @@ def nuevo_estudiante():
     insert into students(username,priority) values (%s,%s) on conflict do nothing;
     """,(padron,prioridad,))
     conn.commit()
+    cursor.execute("""
+    insert into degree_enrollments values (10,%s)
+    """,(padron,))
     return padron
 
 def materia_de_depto(depto):
@@ -193,9 +196,11 @@ def crear_cursos_de_depto(department_code,semester):
     for m in materias:
         crear_cursos_de_materia(department_code,m,semester)
 
-
+#inscribir_estudiantes(2)
 for s in ["1c2018","2c2018"]:
     print("agregando a 75 ",s)
     crear_cursos_de_depto("75",s)
+    crear_cursos_de_depto("66",s)
+    crear_cursos_de_depto("68",s)
     
 
